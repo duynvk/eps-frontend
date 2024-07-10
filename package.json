@@ -20,7 +20,7 @@
     "util": "^0.12.5",
     "web-vitals": "^2.1.4"
   },
-  "homepage": "https://duynvk.github.io/eps",
+  "homepage": "https://duynvk.github.io/eps-frontend",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
