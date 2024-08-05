@@ -14,9 +14,14 @@ const ScoreEntryPage = () => {
   const [selectedTeam, setSelectedTeam] = useState(null);
   const [selectedDate, setSelectedDate] = useState(new Date());
 
+  const handleScoresSaved = () => {
+    // Tải lại trang sau khi điểm được lưu
+    window.location.reload();
+  };
+
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Nhập Điểm</h1>
+      <h1 className="text-2xl font-bold mb-4 text-center">Nhập Điểm</h1>
       <div className="flex items-center mb-4 space-x-4">
         <div className="w-1/3">
           <SelectGroup onSelect={(groupId) => { setSelectedGroup(groupId); setSelectedTeam(null); }} />
@@ -40,9 +45,15 @@ const ScoreEntryPage = () => {
         )}
       </div>
       {selectedTeam && (
-        <div>
-          <ScoreEntryForm teamId={selectedTeam} selectedDate={selectedDate} />
-        </div>
+        <>
+          <div>
+            <ScoreEntryForm 
+              teamId={selectedTeam} 
+              selectedDate={selectedDate} 
+              onScoresSaved={handleScoresSaved} 
+            />
+          </div>
+        </>
       )}
     </div>
   );

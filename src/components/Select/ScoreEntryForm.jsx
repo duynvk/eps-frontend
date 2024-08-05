@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { axiosInstance } from '../../services/api.js';
 
-const ScoreEntryForm = ({ teamId, selectedDate }) => {
+const ScoreEntryForm = ({ teamId, selectedDate, onScoresSaved }) => {
   const [members, setMembers] = useState([]);
   const [scores, setScores] = useState({});
+  const [totalScore, setTotalScore] = useState(0);
 
   useEffect(() => {
     if (teamId) {
@@ -41,17 +42,22 @@ const ScoreEntryForm = ({ teamId, selectedDate }) => {
   }, [teamId]);
 
   const handleScoreChange = (memberId, field, value) => {
-    setScores({
-      ...scores,
-      [memberId]: {
-        ...scores[memberId],
-        [field]: value
-      }
-    });
+    const numValue = value === '' ? 0 : Number(value);
+    if (!isNaN(numValue)) {
+      setScores({
+        ...scores,
+        [memberId]: {
+          ...scores[memberId],
+          [field]: numValue
+        }
+      });
+    }
   };
 
   const handleSubmit = async () => {
     try {
+      alert(`Xin chúc mừng! ACE đã tích lũy thêm được ${totalScore} ngôi sao ạ ❤️`);
+      onScoresSaved(); // Gọi callback function để thông báo rằng điểm đã được lưu
       for (const memberId of Object.keys(scores)) {
         const scoreEntry = {
           memberId: memberId,
@@ -63,14 +69,26 @@ const ScoreEntryForm = ({ teamId, selectedDate }) => {
         const response = await axiosInstance.post(`/enter-score`, scoreEntry);
         console.log(`Score saved successfully for member ${memberId}`);
         console.log('Response from server:', response.data);
-      }
-  
-      alert('All scores saved successfully!');
+      }  
     } catch (error) {
       console.error('Error saving scores:', error);
       alert('Failed to save scores.');
     }
   };
+
+  const calculateTotalScore = useCallback(() => {
+    let total = 0;
+    for (const memberId in scores) {
+      for (const field in scores[memberId]) {
+        total += Number(scores[memberId][field]);
+      }
+    }
+    return total;
+  }, [scores]);
+
+  useEffect(() => {
+    setTotalScore(calculateTotalScore());
+  }, [calculateTotalScore]);
 
   return (
     <div>
@@ -79,19 +97,20 @@ const ScoreEntryForm = ({ teamId, selectedDate }) => {
           <thead>
             <tr>
               <th className="px-20 py-2 border whitespace-nowrap">Đội viên</th>
+              <th className="px-4 py-2 border">Điểm tích lũy</th>
               <th className="px-4 py-2 border">TP</th>
               <th className="px-1 py-2 border">Laxaro</th>
-              <th className="px-4 py-2 border">1L</th>
-              <th className="px-4 py-2 border">4L</th>
+              <th className="px-1 py-2 border">TĐM 1L</th>
+              <th className="px-1 py-2 border">TĐM 4L</th>
               <th className="px-4 py-2 border">CN</th>
               <th className="px-2 py-2 border">PB 70CĐ</th>
               <th className="px-1 py-2 border">PB Preaching</th>
               <th className="px-4 py-2 border">Đọc sách</th>
               <th className="px-1 py-2 border">Đọc+thi sách</th>
               <th className="px-4 py-2 border">Edu</th>
-              <th className="px-3 py-2 border">Nhóm</th>
-              <th className="px-4 py-2 border">ĐT1</th>
-              <th className="px-4 py-2 border">ĐT5</th>
+              <th className="px-1 py-2 border">Nhóm hiệp</th>
+              <th className="px-1 py-2 border">ĐT 1 Điểm</th>
+              <th className="px-1 py-2 border">ĐT 5 Điểm</th>
               <th className="px-4 py-2 border">HH</th>
               <th className="px-4 py-2 border">KT</th>
             </tr>
@@ -99,7 +118,8 @@ const ScoreEntryForm = ({ teamId, selectedDate }) => {
           <tbody>
             {members.map((member) => (
               <tr key={member._id}>
-                <td className="px-4 py-2 border">{member.name}</td>
+                <td className="px-2 py-2 border">{member.name}</td>
+                <td className="px-2 py-2 border text-center">{member.total_score}</td>
                 {Object.keys(scores[member._id]).map((field) => (
                   <td className="px-1 py-1 border text-center" key={field}>
                     <input
@@ -115,13 +135,14 @@ const ScoreEntryForm = ({ teamId, selectedDate }) => {
           </tbody>
         </table>
       )}
-      <button
-        onClick={handleSubmit}
-        className="mt-4 px-4 py-2 bg-blue-500 text-white"
-        style={{ float: 'right' }} // Đưa nút Save sang phía bên phải
-      >
-        Lưu
-      </button>
+     <div className="flex justify-center">
+        <button
+          onClick={handleSubmit}
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold my-2 py-2 px-4 border border-blue-700 rounded"
+        >
+          Lưu Điểm
+        </button>
+      </div>
     </div>
   );
 };

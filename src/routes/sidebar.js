@@ -10,9 +10,9 @@ const routes = [
       name: "Nhập Điểm",
     },
     {
-      path: "/app/manage-profile",
-      icon: "UserIcon",
-      name: "Hồ Sơ",
+      path: "/app/total-scores",
+      icon: "GridViewIcon",
+      name: "Bảng Điểm",
     },
     
     {

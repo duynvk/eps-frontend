@@ -59,12 +59,12 @@ function Header() {
               isOpen={isProfileMenuOpen}
               onClose={() => setIsProfileMenuOpen(false)}
             >
-              <DropdownItem tag="a" href="/app/manage-profile">
+              <DropdownItem tag="a" href="/app/total-scores">
                 <OutlinePersonIcon
                   className="w-4 h-4 mr-3"
                   aria-hidden="true"
                 />
-                <span>Hồ Sơ Người Dùng</span>
+                <span>Bảng Điểm</span>
               </DropdownItem>
               <DropdownItem tag="a" href="/app/settings">
                 <OutlineCogIcon className="w-4 h-4 mr-3" aria-hidden="true" />

@@ -18,7 +18,7 @@ const routes = [
     component: EnterScore,
   },
   {
-    path: "/manage-profile",
+    path: "/total-scores",
     component: Profile,
   },
   {
